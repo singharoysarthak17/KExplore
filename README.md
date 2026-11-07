@@ -30,8 +30,8 @@ Built for the task: *Design and Develop a Responsive Event Management Website*.
 
 ## 🎨 Design system
 
-- **Background:** deep navy (`#0a0e1a`) or off-white (`#fafaf7`)
-- **Accent:** electric violet (`#7c3aed`) + orange (`#f4511e`)
+- **Light mode:** warm off-white background (`#F7F7F2`), soft sage secondary (`#E7EEE3`), sage accent (`#8FAE91`), forest green secondary (`#164C32`)
+- **Dark mode:** deep charcoal green background (`#101A16`), dark forest secondary (`#17271F`), sage accent (`#A5C9A8`), soft mint secondary (`#C4E2C5`)
 - **Typography:** Plus Jakarta Sans (display), Manrope (headings), Inter (body)
 - **Cards:** rounded corners, gradient media areas, smooth hover effects
 

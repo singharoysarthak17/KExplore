@@ -1,30 +1,50 @@
 "use strict";
 
-/* ================= State ================= */
 const state = {
   category: "All",
   query: "",
+  location: "all",
+  date: "",
   sort: "date-asc",
+  faved: [],
   registrations: [],
+  auth: null,
+  section: "events",
 };
 
-let revealIO = null;
-
 const DAY_MS = 86400000;
+const CITIES = [
+  "Los Angeles, CA", "San Francisco, CA", "Austin, TX", "New York, NY", "Denver, CO",
+  "Seattle, WA", "Boston, MA", "Nashville, TN", "Aspen, CO",
+];
+
+const CATEGORY_EMOJI = {
+  "All": "✨",
+  "Music & Concerts": "🎵",
+  "Tech & Startups": "🤖",
+  "Food & Drink": "🍜",
+  "Arts & Culture": "🎨",
+  "Wellness": "🧘",
+  "Sports": "⚽",
+  "Business": "🌱",
+  "Travel": "🏔️",
+  "Drama": "🎭",
+  "Comedy": "🎤",
+};
 
 const EVENTS_RAW = [
-  { id: 1, title: "Neon Nights: Synthwave Live", category: "Music", dayOffset: 14, time: "8:30 PM", venue: "The Echo", city: "Los Angeles, CA", price: 45, emoji: "🎹", g1: "#7c3aed", g2: "#f4511e", host: "Pulsewave", attendees: 182, capacity: 500, featured: true, tags: ["Synthwave", "Live Electronic", "Afterparty"] },
-  { id: 2, title: "DevFest AI & Cloud", category: "Tech", dayOffset: 28, time: "9:00 AM", venue: "Moscone Center", city: "San Francisco, CA", price: 99, emoji: "🤖", g1: "#4f46e5", g2: "#06b6d4", host: "DevFest", attendees: 342, capacity: 800, featured: true, tags: ["AI", "Cloud", "Engineering", "Conference"] },
-  { id: 3, title: "Midnight Street Food Market", category: "Food & Drink", dayOffset: 7, time: "6:00 PM", venue: "Hustle Park", city: "Austin, TX", price: 0, emoji: "🍜", g1: "#f59e0b", g2: "#ef4444", host: "Hustle Society", attendees: 540, capacity: 1000, featured: false, tags: ["Street Food", "Night Market", "Foodie"] },
-  { id: 4, title: "Canvas & Cabernet: Art Night", category: "Arts", dayOffset: 36, time: "7:00 PM", venue: "The Loft", city: "New York, NY", price: 30, emoji: "🎨", g1: "#ec4899", g2: "#8b5cf6", host: "Loft Art", attendees: 96, capacity: 120, featured: false, tags: ["Painting", "Wine", "Creative"] },
-  { id: 5, title: "Sunrise Sound Bath & Yoga", category: "Wellness", dayOffset: 22, time: "7:00 AM", venue: "Mount Tabor Park", city: "Denver, CO", price: 0, emoji: "🧘", g1: "#06b6d4", g2: "#3b82f6", host: "Stillpoint", attendees: 74, capacity: 150, featured: false, tags: ["Yoga", "Sound Bath", "Meditation"] },
-  { id: 6, title: "City Derby Finals", category: "Sports", dayOffset: 42, time: "7:30 PM", venue: "Lumen Field", city: "Seattle, WA", price: 25, emoji: "⚽", g1: "#ef4444", g2: "#f97316", host: "Metro FC", attendees: 2100, capacity: 4500, featured: false, tags: ["Football", "Championship", "Live"] },
-  { id: 7, title: "Founders Mixer: Climate Tech", category: "Business", dayOffset: 69, time: "6:00 PM", venue: "The Battery", city: "Boston, MA", price: 40, emoji: "🌱", g1: "#10b981", g2: "#14b8a6", host: "Climate Founders", attendees: 58, capacity: 100, featured: false, tags: ["Networking", "Climate", "Startups"] },
-  { id: 8, title: "Alpine Lights: Winter Trek", category: "Travel", dayOffset: 90, time: "8:00 AM", venue: "Summit Base Camp", city: "Aspen, CO", price: 120, emoji: "🏔️", g1: "#0ea5e9", g2: "#6366f1", host: "Summit Collective", attendees: 32, capacity: 60, featured: false, tags: ["Hiking", "Winter", "Adventure"] },
-  { id: 9, title: "Hamlet — Shakespeare in the Park", category: "Drama", dayOffset: 24, time: "7:00 PM", venue: "Central Park Amphitheatre", city: "New York, NY", price: 35, emoji: "🎭", g1: "#8b5cf6", g2: "#ec4899", host: "Park Players", attendees: 210, capacity: 400, featured: false, tags: ["Theatre", "Drama", "Classic"] },
-  { id: 10, title: "Hack the Planet: AI for Good Hackathon", category: "Tech", dayOffset: 52, time: "9:00 AM", venue: "Innovation Hub", city: "San Francisco, CA", price: 50, emoji: "🤝", g1: "#06b6d4", g2: "#10b981", host: "Hackathon Alliance", attendees: 480, capacity: 1000, featured: true, tags: ["Hackathon", "AI", "Open Source"] },
-  { id: 11, title: "Stand-Up Comedy: Laugh Riot", category: "Comedy", dayOffset: 17, time: "8:00 PM", venue: "The Basement", city: "Los Angeles, CA", price: 25, emoji: "🎤", g1: "#f97316", g2: "#ef4444", host: "Laugh Riot", attendees: 150, capacity: 300, featured: false, tags: ["Comedy", "Live", "Stand-Up"] },
-  { id: 12, title: "Indie Waves: Folk & Acoustic Concert", category: "Music", dayOffset: 38, time: "7:30 PM", venue: "The Bluebird Hall", city: "Nashville, TN", price: 40, emoji: "🎸", g1: "#10b981", g2: "#84cc16", host: "Indie Waves", attendees: 260, capacity: 350, featured: false, tags: ["Folk", "Acoustic", "Concert"] },
+  { id: 1, title: "Neon Nights: Synthwave Live", category: "Music & Concerts", dayOffset: 14, time: "8:30 PM", venue: "The Echo", city: "Los Angeles, CA", price: 45, emoji: "🎹", g1: "#8fae91", g2: "#164c32", host: "Pulsewave", attendees: 182, capacity: 500, featured: true, tags: ["Synthwave", "Live Electronic", "Afterparty"] },
+  { id: 2, title: "DevFest AI & Cloud", category: "Tech & Startups", dayOffset: 28, time: "9:00 AM", venue: "Moscone Center", city: "San Francisco, CA", price: 99, emoji: "🤖", g1: "#c4e2c5", g2: "#164c32", host: "DevFest", attendees: 342, capacity: 800, featured: true, tags: ["AI", "Cloud", "Engineering", "Conference"] },
+  { id: 3, title: "Midnight Street Food Market", category: "Food & Drink", dayOffset: 7, time: "6:00 PM", venue: "Hustle Park", city: "Austin, TX", price: 0, emoji: "🍜", g1: "#b9cba9", g2: "#6e8f6e", host: "Hustle Society", attendees: 540, capacity: 1000, featured: false, tags: ["Street Food", "Night Market", "Foodie"] },
+  { id: 4, title: "Canvas & Cabernet: Art Night", category: "Arts & Culture", dayOffset: 36, time: "7:00 PM", venue: "The Loft", city: "New York, NY", price: 30, emoji: "🎨", g1: "#8fae91", g2: "#3f6b4f", host: "Loft Art", attendees: 96, capacity: 120, featured: false, tags: ["Painting", "Wine", "Creative"] },
+  { id: 5, title: "Sunrise Sound Bath & Yoga", category: "Wellness", dayOffset: 22, time: "7:00 AM", venue: "Mount Tabor Park", city: "Denver, CO", price: 0, emoji: "🧘", g1: "#a5c9a8", g2: "#4e6e57", host: "Stillpoint", attendees: 74, capacity: 150, featured: false, tags: ["Yoga", "Sound Bath", "Meditation"] },
+  { id: 6, title: "City Derby Finals", category: "Sports", dayOffset: 42, time: "7:30 PM", venue: "Lumen Field", city: "Seattle, WA", price: 25, emoji: "⚽", g1: "#6e8f6e", g2: "#2f5d3a", host: "Metro FC", attendees: 2100, capacity: 4500, featured: false, tags: ["Football", "Championship", "Live"] },
+  { id: 7, title: "Founders Mixer: Climate Tech", category: "Business", dayOffset: 69, time: "6:00 PM", venue: "The Battery", city: "Boston, MA", price: 40, emoji: "🌱", g1: "#8fae91", g2: "#164c32", host: "Climate Founders", attendees: 58, capacity: 100, featured: false, tags: ["Networking", "Climate", "Startups"] },
+  { id: 8, title: "Alpine Lights: Winter Trek", category: "Travel", dayOffset: 90, time: "8:00 AM", venue: "Summit Base Camp", city: "Aspen, CO", price: 120, emoji: "🏔️", g1: "#9db89e", g2: "#2e5e43", host: "Summit Collective", attendees: 32, capacity: 60, featured: false, tags: ["Hiking", "Winter", "Adventure"] },
+  { id: 9, title: "Hamlet — Shakespeare in the Park", category: "Drama", dayOffset: 24, time: "7:00 PM", venue: "Central Park Amphitheatre", city: "New York, NY", price: 35, emoji: "🎭", g1: "#8fae91", g2: "#4a6b58", host: "Park Players", attendees: 210, capacity: 400, featured: false, tags: ["Theatre", "Drama", "Classic"] },
+  { id: 10, title: "Hack the Planet: AI for Good Hackathon", category: "Tech & Startups", dayOffset: 52, time: "9:00 AM", venue: "Innovation Hub", city: "San Francisco, CA", price: 50, emoji: "🤝", g1: "#c4e2c5", g2: "#164c32", host: "Hackathon Alliance", attendees: 480, capacity: 1000, featured: true, tags: ["Hackathon", "AI", "Open Source"] },
+  { id: 11, title: "Stand-Up Comedy: Laugh Riot", category: "Comedy", dayOffset: 17, time: "8:00 PM", venue: "The Basement", city: "Los Angeles, CA", price: 25, emoji: "🎤", g1: "#b3c7b0", g2: "#5c7a5e", host: "Laugh Riot", attendees: 150, capacity: 300, featured: false, tags: ["Comedy", "Live", "Stand-Up"] },
+  { id: 12, title: "Indie Waves: Folk & Acoustic Concert", category: "Music & Concerts", dayOffset: 38, time: "7:30 PM", venue: "The Bluebird Hall", city: "Nashville, TN", price: 40, emoji: "🎸", g1: "#a5c9a8", g2: "#3e6b4e", host: "Indie Waves", attendees: 260, capacity: 350, featured: false, tags: ["Folk", "Acoustic", "Concert"] },
 ];
 
 const events = EVENTS_RAW.map((e) => ({ ...e, isoDate: isoFromNow(e.dayOffset) }));
@@ -51,12 +71,12 @@ function fmtDateBadge(iso) {
 }
 
 function fmtTime(t) {
-  const [hRaw, mRaw] = t.split(" ");
-  let h = parseInt(hRaw, 10);
-  const m = parseInt(mRaw, 10);
-  const ampm = /pm/i.test(mRaw) ? "PM" : "AM";
-  const hr24 = ampm === "PM" && h < 12 ? h + 12 : h;
-  const hr12 = hr24 % 12 === 0 ? 12 : hr24 % 12;
+  const [timeStr, meridiem] = t.split(" ");
+  const [h, m] = timeStr.split(":").map(Number);
+  let hh = h;
+  if (/pm/i.test(meridiem) && hh < 12) hh += 12;
+  const hr12 = hh % 12 === 0 ? 12 : hh % 12;
+  const ampm = /pm/i.test(meridiem) ? "PM" : "AM";
   return `${hr12}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
@@ -69,8 +89,6 @@ function countdownTarget(e) {
   return new Date(y, mo - 1, d, hh, m, 0, 0);
 }
 
-function pluralize(n, word, plural) { return n === 1 ? word : plural; }
-
 /* ================= DOM refs ================= */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -80,15 +98,31 @@ const el = {
   navToggle: $("#navToggle"),
   nav: $("#primaryNav"),
   themeToggle: $("#themeToggle"),
+  navLocation: $("#navLocation"),
+  navSearchBtn: $("#navSearchBtn"),
+  navSignInBtn: $("#navSignInBtn"),
   themeRoot: document.documentElement,
+  hero: $("#home"),
   heroSearch: $("#heroSearch"),
-  heroSearchInput: $("#heroSearchInput"),
+  heroSearchName: $("#heroSearchName"),
+  heroSearchCategory: $("#heroSearchCategory"),
+  heroSearchLocation: $("#heroSearchLocation"),
+  heroSearchDate: $("#heroSearchDate"),
+  heroSearchBtn: $("#heroSearchBtn"),
+  trendingTags: $("#trendingTags"),
+  categoryTrack: $("#categoryTrack"),
+  trending: $("#trending"),
+  trendingGrid: $("#trendingGrid"),
   eventsGrid: $("#eventsGrid"),
   eventsEmpty: $("#eventsEmpty"),
   eventsCount: $("#eventsCount"),
   sortSelect: $("#sortSelect"),
-  categoryGrid: $("#categoryGrid"),
   eventCategoryChips: $("#eventCategoryChips"),
+  about: $("#about"),
+  siteFooter: $("#siteFooter"),
+  newsletterForm: $("#newsletterForm"),
+  newsletterEmail: $("#newsletterEmail"),
+  footerYear: $("#footerYear"),
   eventModal: $("#eventModal"),
   modalClose: $("#modalClose"),
   modalMedia: $("#modalMedia"),
@@ -96,7 +130,6 @@ const el = {
   modalCat: $("#modalCat"),
   modalDateBadge: $("#modalDateBadge"),
   modalTitle: $("#modalTitle"),
-  modalMeta: $("#modalMeta"),
   modalDate: $("#modalDate"),
   modalTime: $("#modalTime"),
   modalVenue: $("#modalVenue"),
@@ -106,6 +139,7 @@ const el = {
   modalAttendees: $("#modalAttendees"),
   modalDesc: $("#modalDesc"),
   modalTags: $("#modalTags"),
+  countdown: $("#countdown"),
   countdownValue: $("#countdownValue"),
   regForm: $("#regForm"),
   regName: $("#regName"),
@@ -121,10 +155,18 @@ const el = {
   regSuccessText: $("#regSuccessText"),
   regSuccessDetails: $("#regSuccessDetails"),
   regDoneBtn: $("#regDoneBtn"),
+  authModal: $("#authModal"),
+  authClose: $("#authClose"),
+  authForm: $("#authForm"),
+  authEmail: $("#authEmail"),
+  authPassword: $("#authPassword"),
+  authErrEmail: $("#authErrEmail"),
+  authErrPassword: $("#authErrPassword"),
+  authSubmit: $("#authSubmit"),
+  authSuccess: $("#authSuccess"),
+  authSuccessText: $("#authSuccessText"),
+  authDoneBtn: $("#authDoneBtn"),
   toast: $("#toast"),
-  newsletterForm: $("#newsletterForm"),
-  newsletterEmail: $("#newsletterEmail"),
-  footerYear: $("#footerYear"),
 };
 
 /* ================= Theme ================= */
@@ -137,7 +179,7 @@ function applyTheme(theme) {
 function initTheme() {
   let saved = null;
   try { saved = localStorage.getItem("kexplore_theme"); } catch (e) {}
-  applyTheme(saved === "light" ? "light" : "dark");
+  applyTheme(saved === "dark" ? "dark" : "light");
 }
 
 /* ================= Toast ================= */
@@ -160,19 +202,14 @@ function categories() {
 
 function renderCategories() {
   const cats = categories();
-  el.categoryGrid.innerHTML = cats.map((c) => `
-    <button class="category-card reveal" type="button" data-category="${c.name}">
-      <span class="category-icon" aria-hidden="true">${c.name === "All" ? "✨" : (categoryEmoji(c.name))}</span>
-      <span><h3>${c.name}</h3><p>${c.count} event${c.count === 1 ? "" : "s"}</p></span>
+  el.categoryTrack.innerHTML = cats.map((c) => `
+    <button class="category-card reveal${c.name === state.category ? " is-active" : ""}" type="button" data-category="${c.name}">
+      <span class="category-icon" aria-hidden="true">${CATEGORY_EMOJI[c.name] || "🗓️"}</span>
+      <span class="category-text"><h3>${c.name}</h3><p>${c.count} event${c.count === 1 ? "" : "s"}</p></span>
     </button>`).join("");
-  el.categoryGrid.querySelectorAll(".category-card").forEach((btn) => {
-    btn.addEventListener("click", () => { state.category = btn.dataset.category; setCategoryAndRender(btn.dataset.category); });
+  el.categoryTrack.querySelectorAll(".category-card").forEach((btn) => {
+    btn.addEventListener("click", () => { state.category = btn.dataset.category; state.section = "events"; renderAll(); scrollToEvents(); });
   });
-}
-
-function categoryEmoji(cat) {
-  const map = { Music: "🎵", Tech: "🤖", "Food & Drink": "🍜", Arts: "🎨", Wellness: "🧘", Sports: "⚽", Business: "🌱", Travel: "🏔️", Drama: "🎭", Comedy: "🎤" };
-  return map[cat] || "🗓️";
 }
 
 function renderChips() {
@@ -180,16 +217,35 @@ function renderChips() {
   el.eventCategoryChips.innerHTML = cats.map((c) => `
     <button class="chip${c.name === state.category ? " chip-active" : ""}" type="button" data-category="${c.name}">${c.name}</button>`).join("");
   el.eventCategoryChips.querySelectorAll(".chip").forEach((chip) => {
-    chip.addEventListener("click", () => { state.category = chip.dataset.category; renderAll(); scrollToEvents(); });
+    chip.addEventListener("click", () => { state.category = chip.dataset.category; state.section = "events"; renderAll(); scrollToEvents(); });
   });
 }
 
-/* ================= Events render ================= */
+/* ================= Events rendering ================= */
+function renderEventsSkeleton() {
+  const cards = Array.from({ length: 6 }, () => `
+    <div class="skeleton-card reveal" aria-hidden="true">
+      <div class="skeleton-media"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line" style="width:45%;height:12px"></div>
+        <div class="skeleton-line" style="width:85%;height:16px"></div>
+        <div class="skeleton-line" style="width:65%;height:12px"></div>
+        <div class="skeleton-line" style="width:40%;height:12px"></div>
+      </div>
+    </div>`).join("");
+  const target = state.section === "trending" ? el.trendingGrid : el.eventsGrid;
+  target.innerHTML = cards;
+  el.eventsEmpty.hidden = true;
+  el.eventsCount.textContent = "Loading…";
+}
+
 function getFiltered() {
   let list = events.filter((e) => state.category === "All" || e.category === state.category);
+  if (state.location && state.location !== "all") list = list.filter((e) => e.city === state.location);
+  if (state.date) list = list.filter((e) => e.isoDate.slice(0, 10) === state.date);
   if (state.query) {
     const q = state.query.trim().toLowerCase();
-    list = list.filter((e) => [e.title, e.venue, e.city, e.category, e.host, e.desc, e.tags.join(" ")].join(" ").toLowerCase().includes(q));
+    list = list.filter((e) => [e.title, e.venue, e.city, e.category, e.host, e.tags.join(" ")].join(" ").toLowerCase().includes(q));
   }
   const sorted = [...list];
   if (state.sort === "date-asc") sorted.sort((a, b) => a.isoDate.localeCompare(b.isoDate));
@@ -198,14 +254,14 @@ function getFiltered() {
   return sorted;
 }
 
-function eventCard(e) {
+function eventCard(e, dark) {
   const d = new Date(e.isoDate + "T00:00:00");
-  const dateLabel = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const badge = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase();
   const priceLabel = e.price > 0 ? `$${e.price}` : "Free";
   const desc = e.desc || "A hand-curated experience not to be missed.";
+  const isFaved = state.faved.includes(String(e.id));
   return `
-    <article class="event-card reveal" data-id="${e.id}">
+    <article class="event-card${dark ? " trending-card" : ""}" data-id="${e.id}">
       <div class="event-media" style="--g1:${e.g1}; --g2:${e.g2}">
         <span class="event-emoji" aria-hidden="true">${e.emoji}</span>
         <span class="event-cat">${e.category}</span>
@@ -218,6 +274,7 @@ function eventCard(e) {
         <div class="event-foot">
           <span class="event-price">${priceLabel}</span>
           <span class="event-attendees">${e.attendees} attending</span>
+          <button class="bookmark-btn${isFaved ? " is-faved" : ""}" type="button" data-bookmark="${e.id}" aria-label="${isFaved ? "Remove from favourites" : "Save to favourites"}">${isFaved ? "❤️" : "🤍"}</button>
           <button class="btn btn-ghost btn-sm" type="button" data-open="${e.id}">Details</button>
         </div>
       </div>
@@ -226,31 +283,17 @@ function eventCard(e) {
 
 function renderEvents() {
   const list = getFiltered();
-  if (list.length === 0) {
-    el.eventsGrid.innerHTML = "";
-    el.eventsEmpty.hidden = false;
+  const isTrending = state.section === "trending";
+  const target = isTrending ? el.trendingGrid : el.eventsGrid;
+  const source = isTrending ? list.filter((e) => e.featured) : list;
+  if (source.length === 0) {
+    target.innerHTML = "";
+    el.eventsEmpty.hidden = true;
     el.eventsCount.textContent = "0 events";
     return;
   }
-  el.eventsEmpty.hidden = true;
-  el.eventsGrid.innerHTML = list.map(eventCard).join("");
-  el.eventsCount.textContent = `Showing ${list.length} of ${events.length} events`;
-}
-
-function renderEventsSkeleton() {
-  const cards = Array.from({ length: 6 }, (_, i) => `
-    <div class="skeleton-card reveal" aria-hidden="true">
-      <div class="skeleton-media"></div>
-      <div class="skeleton-body">
-        <div class="skeleton-line" style="width:45%;height:12px"></div>
-        <div class="skeleton-line" style="width:85%;height:16px"></div>
-        <div class="skeleton-line" style="width:65%;height:12px"></div>
-        <div class="skeleton-line" style="width:40%;height:12px"></div>
-      </div>
-    </div>`).join("");
-  el.eventsGrid.innerHTML = cards;
-  el.eventsEmpty.hidden = true;
-  el.eventsCount.textContent = "Loading…";
+  target.innerHTML = source.map((e) => eventCard(e, isTrending)).join("");
+  el.eventsCount.textContent = `Showing ${source.length} of ${events.length} events`;
 }
 
 function renderAll() {
@@ -266,25 +309,33 @@ function scrollToEvents() { document.querySelector("#events")?.scrollIntoView({ 
 
 function setCategoryAndRender(cat) {
   state.category = cat;
+  state.section = "events";
   renderAll();
   scrollToEvents();
 }
 
-/* ================= Init render ================= */
-function initEvents() {
-  renderCategories();
-  renderChips();
-  renderEventsSkeleton();
-  setTimeout(() => { renderEvents(); }, 650); // simulate curated fetch / skeleton loading
+/* ================= Favourites ================= */
+function initBookmarks() {
+  document.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("[data-bookmark]");
+    if (!btn) return;
+    const id = btn.dataset.bookmark;
+    const idx = state.faved.indexOf(String(id));
+    if (idx >= 0) { state.faved.splice(idx, 1); btn.classList.remove("is-faved"); btn.innerHTML = "🤍"; }
+    else { state.faved.push(String(id)); btn.classList.add("is-faved"); btn.innerHTML = "❤️"; }
+    try { localStorage.setItem("kexplore_favs", JSON.stringify(state.faved)); } catch (e) {}
+    showToast(state.faved.includes(String(id)) ? "Saved to your favourites ❤️" : "Removed from favourites");
+  });
 }
 
-/* ================= Modal ================= */
+/* ================= Event modal ================= */
 let currentEvent = null;
 let countdownTimer = null;
 
 function openModal(id) {
   const e = events.find((x) => x.id === id);
   if (!e) return;
+  state.section = "events";
   currentEvent = e;
   el.modalMedia.style.setProperty("--g1", e.g1);
   el.modalMedia.style.setProperty("--g2", e.g2);
@@ -383,6 +434,55 @@ function submitRegistration(ev) {
   showToast(`🎟️ Registration ${data.code} confirmed!`);
 }
 
+/* ================= Auth (mock) ================= */
+function openAuthModal() {
+  state.auth = "open";
+  el.authForm.reset();
+  clearAuthErrors();
+  el.authSuccess.hidden = true;
+  document.body.style.overflow = "hidden";
+  el.authModal.hidden = false;
+  requestAnimationFrame(() => el.authModal.classList.add("is-open"));
+}
+function closeAuthModal() {
+  state.auth = null;
+  document.body.style.overflow = "";
+  el.authModal.classList.remove("is-open");
+  setTimeout(() => { el.authModal.hidden = true; }, 250);
+}
+function clearAuthErrors() { el.authErrEmail.textContent = ""; el.authErrPassword.textContent = ""; }
+function validateAuth() {
+  let ok = true;
+  const email = el.authEmail.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { el.authErrEmail.textContent = "Please enter a valid email address."; ok = false; }
+  const pw = el.authPassword.value;
+  if (pw.length < 4) { el.authErrPassword.textContent = "Password must be at least 4 characters."; ok = false; }
+  return ok;
+}
+function submitAuth(ev) {
+  ev.preventDefault();
+  if (!validateAuth()) return;
+  state.auth = { email: el.authEmail.value.trim(), at: new Date().toISOString() };
+  try { localStorage.setItem("kexplore_auth", JSON.stringify(state.auth)); } catch (e) {}
+  el.authSuccess.hidden = false;
+  el.authForm.hidden = true;
+  showToast("Signed in successfully ✅");
+}
+
+/* ================= Modal wiring ================= */
+function initModal() {
+  el.modalClose.addEventListener("click", closeModal);
+  el.eventModal.addEventListener("click", (ev) => { if (ev.target === el.eventModal) closeModal(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") { if (state.auth === "open") closeAuthModal(); else closeModal(); } });
+  el.regForm.addEventListener("submit", submitRegistration);
+  el.regDoneBtn.addEventListener("click", closeModal);
+
+  el.authClose.addEventListener("click", closeAuthModal);
+  el.authModal.addEventListener("click", (ev) => { if (ev.target === el.authModal) closeAuthModal(); });
+  el.authForm.addEventListener("submit", submitAuth);
+  el.authDoneBtn.addEventListener("click", closeAuthModal);
+}
+
 /* ================= Header / nav ================= */
 function initHeader() {
   const toggle = el.navToggle;
@@ -399,13 +499,17 @@ function initHeader() {
       toggle.setAttribute("aria-expanded", "false");
     });
   });
+  el.themeToggle.addEventListener("click", () => applyTheme(state.theme === "light" ? "dark" : "light"));
+  el.navLocation.addEventListener("change", (ev) => { state.location = ev.target.value; state.section = "events"; renderAll(); scrollToEvents(); });
+  el.navSearchBtn.addEventListener("click", () => el.heroSearchName.focus());
+  el.navSignInBtn.addEventListener("click", openAuthModal);
   const onScroll = () => el.header.classList.toggle("scrolled", window.scrollY > 8);
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
-  el.themeToggle.addEventListener("click", () => applyTheme(state.theme === "light" ? "dark" : "light"));
 }
 
 /* ================= Reveal on scroll ================= */
+let revealIO = null;
 function initReveal() {
   if (revealIO) revealIO.disconnect();
   const io = new IntersectionObserver((entries) => {
@@ -415,44 +519,23 @@ function initReveal() {
   document.querySelectorAll(".reveal").forEach((n) => io.observe(n));
 }
 
-/* ================= Events wiring ================= */
-function initEventsWiring() {
+/* ================= Hero search ================= */
+function initHero() {
   el.heroSearch.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    state.category = "All";
-    state.query = el.heroSearchInput.value.trim();
+    state.category = el.heroSearchCategory.value || "All";
+    state.location = el.heroSearchLocation.value || "all";
+    state.date = el.heroSearchDate.value || "";
+    state.query = el.heroSearchName.value.trim();
+    state.section = "events";
     renderAll();
     scrollToEvents();
   });
-  el.eventCategoryChips.addEventListener("click", (ev) => {
-    const chip = ev.target.closest(".chip");
-    if (!chip) return;
-    state.category = chip.dataset.category;
-    renderAll();
-    scrollToEvents();
-  });
-  el.sortSelect.addEventListener("change", (ev) => { state.sort = ev.target.value; renderAll(); });
-  el.eventsGrid.addEventListener("click", (ev) => {
-    const btn = ev.target.closest("[data-open]");
-    if (btn) openModal(Number(btn.dataset.open));
-  });
-  el.categoryGrid.addEventListener("click", (ev) => {
-    const card = ev.target.closest(".category-card");
-    if (!card) return;
-    state.category = card.dataset.category;
-    renderAll();
-    scrollToEvents();
-  });
-}
-
-/* ================= Modal wiring ================= */
-function initModal() {
-  el.modalClose.addEventListener("click", closeModal);
-  el.eventModal.addEventListener("click", (ev) => { if (ev.target === el.eventModal) closeModal(); });
-  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeModal(); });
-  el.regEvent.addEventListener("change", () => { const nid = Number(el.regEvent.value); const nev = events.find((x) => x.id === nid); if (nev) startCountdown(nev); });
-  el.regForm.addEventListener("submit", submitRegistration);
-  el.regDoneBtn.addEventListener("click", closeModal);
+  if (el.trendingTags) {
+    el.trendingTags.querySelectorAll(".trending-tag").forEach((tag) => {
+      tag.addEventListener("click", () => { state.category = tag.dataset.category; state.section = "events"; renderAll(); scrollToEvents(); });
+    });
+  }
 }
 
 /* ================= Newsletter ================= */
@@ -471,15 +554,14 @@ function init() {
   initTheme();
   initHeader();
   initReveal();
-  initEventsWiring();
+  initBookmarks();
+  initHero();
   initModal();
+  initAuth();
   initNewsletter();
 
-  // footer year
   try { el.footerYear.textContent = String(new Date().getFullYear()); } catch (e) {}
 
-  // hero search focus on load (small nicety)
-  // initial render
   renderCategories();
   renderChips();
   renderEventsSkeleton();
