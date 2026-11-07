@@ -1,19 +1,19 @@
-# K Explore �?" Premium Event Discovery & Management
+# K Explore — Premium Event Discovery & Management
 
-A premium event discovery platform that combines the **simplicity of Luma**, the **visual storytelling of Fever** and the **functionality of Eventbrite**.
+A premium event discovery platform that blends the simplicity of Luma, the visual storytelling of Fever and the functionality of Eventbrite.
 
 Built for the task: *Design and Develop a Responsive Event Management Website*.
 
-## �o" Overview
+## Overview
 
-**K Explore** lets users:
+K Explore lets users:
 
 - **Explore** upcoming events through a striking hero, category browsing and a full event grid.
 - **Discover** events by category, venue, city or free-text search.
 - **Register** for events via a validated registration form (name, email, phone, event) with an instant confirmation and local ticket code.
 - **Experience** event details with meta information and live countdown timers.
 
-## dYZ_ Features
+## Features
 
 - Responsive event management UI (HTML5 + CSS3 + vanilla JavaScript)
 - Hero section with live event search
@@ -26,37 +26,37 @@ Built for the task: *Design and Develop a Responsive Event Management Website*.
 - Dark / light theme with persisted choice
 - Skeleton loading state while events render
 - Scroll-reveal animations, hover transitions
-- Fully responsive: desktop (3-"4 col grid), tablet (2 col), mobile (1 col)
+- Fully responsive: desktop (3-4 col grid), tablet (2 col), mobile (1 col)
 
-## dYZ" Design system
+## Design system
 
 - **Light mode:** warm off-white background (`#F7F7F2`), soft sage secondary (`#E7EEE3`), sage accent (`#8FAE91`), forest green secondary (`#164C32`)
 - **Dark mode:** deep charcoal green background (`#101A16`), dark forest secondary (`#17271F`), sage accent (`#A5C9A8`), soft mint secondary (`#C4E2C5`)
 - **Typography:** Plus Jakarta Sans (display), Manrope (headings), Inter (body)
 - **Cards:** rounded corners, gradient media areas, smooth hover effects
 
-## dY"? Folder structure
+## Folder structure
 
 ```
 KExplore/
 index.html          # Markup: header, hero, categories, events, about, footer, modal
 css/
-style.css       # Design tokens, components, responsive rules
+style.css           # Design tokens, components, responsive rules
 js/
-app.js          # Data, rendering, filters, modal, registration logic
+app.js            # Data, rendering, filters, modal, registration logic
 assets/
-favicon.svg     # Brand mark
+favicon.svg         # Brand mark
 README.md
 .gitignore
 ```
 
-## dY>� Tech stack
+## Tech stack
 
-- HTML5, CSS3, JavaScript (vanilla �?" no framework required; optional Tailwind CSS / React were allowed by the task)
+- HTML5, CSS3, JavaScript (vanilla — no framework required; optional Tailwind CSS / React were allowed by the task)
 - Google Fonts (self-hosted via CDN link)
 - Local `localStorage` for registrations + theme preference
 
-## dYs? Run locally
+## Run locally
 
 Because this is a static site, no build step is required.
 
@@ -69,13 +69,13 @@ python -m http.server 8080
 
 Then open the served URL (e.g. http://localhost:8080).
 
-## dY"� Deployment
+## Deployment
 
 The production build is static and can be deployed to:
 
-- **GitHub Pages** �?" push to `main`, enable Pages from the repository root.
-- **Vercel / Netlify** �?" import the repository, no build command needed (`npm run build` not required; static output).
+- **GitHub Pages** — push to `main`, enable Pages from the repository root.
+- **Vercel / Netlify** — import the repository, no build command needed (`npm run build` not required; static output).
 
-## Author
+Author
 
-**Sarthak** �--" `singharoysarthak17`
+**Sarthak** — `singharoysarthak17`
