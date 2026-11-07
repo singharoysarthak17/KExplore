@@ -37,17 +37,15 @@ K Explore lets users:
 
 ## Folder structure
 
-```
-KExplore/
-index.html          # Markup: header, hero, categories, events, about, footer, modal
-css/
-style.css           # Design tokens, components, responsive rules
-js/
-app.js            # Data, rendering, filters, modal, registration logic
-assets/
-favicon.svg         # Brand mark
-README.md
-.gitignore
+| File | Purpose |
+|------|---------|
+| `index.html` | Main markup — header, hero, categories, events section, about, footer, modal |
+| `css/style.css` | Design tokens, components, responsive rules (sage/forest palette, theme switching) |
+| `js/app.js` | Data (12 events), rendering logic, filters, modal, registration with validation |
+| `assets/` | Contains `favicon.svg` and the animated `event-night.svg` hero/card image |
+| `favicon.svg` | Brand mark favicon |
+| `README.md` | This file — project overview, features, design system, how to run/deploy |
+| `.gitignore` | Standard git ignore for node_modules, dependencies, etc. |
 ```
 
 ## Tech stack
