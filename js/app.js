@@ -318,6 +318,15 @@ function setCategoryAndRender(cat) {
   scrollToEvents();
 }
 
+/* ================= Event card actions ================= */
+function initOpenHandlers() {
+  document.addEventListener("click", (ev) => {
+    const openBtn = ev.target.closest("[data-open]");
+    if (!openBtn) return;
+    openModal(Number(openBtn.dataset.open));
+  });
+}
+
 /* ================= Favourites ================= */
 function initBookmarks() {
   document.addEventListener("click", (ev) => {
@@ -562,6 +571,7 @@ function init() {
   initHeader();
   initReveal();
   initBookmarks();
+  initOpenHandlers();
   initHero();
   initModal();
   initNewsletter();
