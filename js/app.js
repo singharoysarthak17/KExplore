@@ -282,6 +282,8 @@ function openModal(id) {
   const e = events.find((x) => x.id === id);
   if (!e) return;
   currentEvent = e;
+  el.modalMedia.style.setProperty("--g1", e.g1);
+  el.modalMedia.style.setProperty("--g2", e.g2);
   el.modalEmoji.textContent = e.emoji;
   el.modalCat.textContent = e.category;
   el.modalDateBadge.textContent = fmtDateBadge(e.isoDate);
