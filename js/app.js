@@ -49,6 +49,21 @@ const EVENTS_RAW = [
 
 const events = EVENTS_RAW.map((e) => ({ ...e, isoDate: isoFromNow(e.dayOffset) }));
 
+const EVENT_IMAGES = {
+  1: "assets/img/photo-1470229722913-7c0e2dbbafd3.jpg",
+  2: "assets/img/photo-1545454675-3531b543be5d.jpg",
+  3: "assets/img/photo-1506929562872-bb421503ef21.jpg",
+  4: "assets/img/photo-1514320291840-2e0a9bf2a9ae.jpg",
+  5: "assets/img/photo-1493225457124-a3eb161ffa5f.jpg",
+  6: "assets/img/photo-1470229722913-7c0e2dbbafd3.jpg",
+  7: "assets/img/photo-1545454675-3531b543be5d.jpg",
+  8: "assets/img/photo-1514320291840-2e0a9bf2a9ae.jpg",
+  9: "assets/img/photo-1493225457124-a3eb161ffa5f.jpg",
+  10: "assets/img/photo-1506929562872-bb421503ef21.jpg",
+  11: "assets/img/photo-1470229722913-7c0e2dbbafd3.jpg",
+  12: "assets/img/photo-1493225457124-a3eb161ffa5f.jpg",
+};
+
 function isoFromNow(days) {
   const d = new Date(Date.now() + days * DAY_MS);
   const y = d.getFullYear();
@@ -103,6 +118,7 @@ const el = {
   navSignInBtn: $("#navSignInBtn"),
   themeRoot: document.documentElement,
   hero: $("#home"),
+  heroPhoto: $("#heroPhoto"),
   heroSearch: $("#heroSearch"),
   heroSearchName: $("#heroSearchName"),
   heroSearchCategory: $("#heroSearchCategory"),
@@ -260,9 +276,11 @@ function eventCard(e, dark) {
   const priceLabel = e.price > 0 ? `$${e.price}` : "Free";
   const desc = e.desc || "A hand-curated experience not to be missed.";
   const isFaved = state.faved.includes(String(e.id));
+  const img = EVENT_IMAGES[e.id] || "";
+  const bgImage = img ? `url('${img}'), linear-gradient(140deg, ${e.g1}, ${e.g2})` : `linear-gradient(140deg, ${e.g1}, ${e.g2})`;
   return `
     <article class="event-card${dark ? " trending-card" : ""}" data-id="${e.id}">
-      <div class="event-media" style="--g1:${e.g1}; --g2:${e.g2}">
+      <div class="event-media" style="--g1:${e.g1}; --g2:${e.g2}; background-image: ${bgImage}; background-size: cover; background-position: center;">
         <span class="event-emoji" aria-hidden="true">${e.emoji}</span>
         <span class="event-cat">${e.category}</span>
         <span class="event-date-badge">${badge}</span>
@@ -339,6 +357,10 @@ function openModal(id) {
   currentEvent = e;
   el.modalMedia.style.setProperty("--g1", e.g1);
   el.modalMedia.style.setProperty("--g2", e.g2);
+  const modalImg = EVENT_IMAGES[e.id] || "";
+  el.modalMedia.style.backgroundImage = modalImg ? `url('${modalImg}'), linear-gradient(140deg, ${e.g1}, ${e.g2})` : `linear-gradient(140deg, ${e.g1}, ${e.g2})`;
+  el.modalMedia.style.backgroundSize = "cover";
+  el.modalMedia.style.backgroundPosition = "center";
   el.modalEmoji.textContent = e.emoji;
   el.modalCat.textContent = e.category;
   el.modalDateBadge.textContent = fmtDateBadge(e.isoDate);
@@ -557,10 +579,13 @@ function init() {
   initBookmarks();
   initHero();
   initModal();
-  initAuth();
   initNewsletter();
 
   try { el.footerYear.textContent = String(new Date().getFullYear()); } catch (e) {}
+
+  el.heroPhoto.style.backgroundImage = "url('assets/img/1506929562872-bb421503ef21.jpg'), linear-gradient(150deg, #8fae91, #164c32)";
+  el.heroPhoto.style.backgroundSize = "cover";
+  el.heroPhoto.style.backgroundPosition = "center";
 
   renderCategories();
   renderChips();
