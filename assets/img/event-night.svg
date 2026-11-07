@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-labelledby="kexploreTitle kexploreDesc">
+  <title id="kexploreTitle">Neon Nights — animated event poster</title>
+  <desc id="kexploreDesc">An animated sage-green event poster with a pulsing glow, expanding rings and an audio equalizer.</desc>
+  <defs>
+    <linearGradient id="kexploreBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fae91"/>
+      <stop offset="55%" stop-color="#6e8f6e"/>
+      <stop offset="100%" stop-color="#164c32"/>
+    </linearGradient>
+    <radialGradient id="kexploreGlow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0%" stop-color="#f3f5ef" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#c4e2c5" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#c4e2c5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#kexploreBg)"/>
+  <circle cx="400" cy="400" r="330" fill="url(#kexploreGlow)"/>
+  <circle class="kexplore-sun" cx="400" cy="400" r="150" fill="#c4e2c5" fill-opacity="0.92"/>
+  <g class="kexplore-ring">
+    <circle cx="400" cy="400" r="215" fill="none" stroke="#f3f5ef" stroke-width="3" stroke-opacity="0.55"/>
+  </g>
+  <g class="kexplore-ring kexplore-ring-2">
+    <circle cx="400" cy="400" r="215" fill="none" stroke="#f3f5ef" stroke-width="2" stroke-opacity="0.32"/>
+  </g>
+  <path d="M0 700 Q 200 620 400 690 T 800 680 V 1000 H 0 Z" fill="#101a16" fill-opacity="0.35"/>
+  <path d="M0 760 Q 240 690 480 750 T 800 740 V 1000 H 0 Z" fill="#101a16" fill-opacity="0.45"/>
+  <g class="kexplore-eq" fill="#f3f5ef">
+    <rect class="kexplore-eq-bar" x="250" y="820" width="36" height="120" rx="18"/>
+    <rect class="kexplore-eq-bar" x="310" y="760" width="36" height="180" rx="18"/>
+    <rect class="kexplore-eq-bar" x="370" y="830" width="36" height="110" rx="18"/>
+    <rect class="kexplore-eq-bar" x="430" y="780" width="36" height="160" rx="18"/>
+    <rect class="kexplore-eq-bar" x="490" y="840" width="36" height="100" rx="18"/>
+  </g>
+
+  <style>
+    @keyframes kexplore-pulse {
+      0% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.08); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 0.85; }
+    }
+    @keyframes kexplore-eq {
+      0%, 100% { transform: scaleY(0.2); }
+      50% { transform: scaleY(1); }
+    }
+    .kexplore-sun {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: kexplore-pulse 4.5s ease-in-out infinite;
+    }
+    .kexplore-ring {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: kexplore-pulse 6s ease-in-out infinite;
+    }
+    .kexplore-ring-2 {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: kexplore-pulse 8s ease-in-out infinite;
+    }
+    .kexplore-eq-bar {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: kexplore-eq 1s ease-in-out infinite;
+    }
+    .kexplore-eq-bar:nth-of-type(1) { animation-delay: 0s; }
+    .kexplore-eq-bar:nth-of-type(2) { animation-delay: 0.12s; }
+    .kexplore-eq-bar:nth-of-type(3) { animation-delay: 0.24s; }
+    .kexplore-eq-bar:nth-of-type(4) { animation-delay: 0.36s; }
+    .kexplore-eq-bar:nth-of-type(5) { animation-delay: 0.48s; }
+  </style>
+</svg>
