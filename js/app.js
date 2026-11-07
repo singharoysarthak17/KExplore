@@ -21,6 +21,10 @@ const EVENTS_RAW = [
   { id: 6, title: "City Derby Finals", category: "Sports", dayOffset: 42, time: "7:30 PM", venue: "Lumen Field", city: "Seattle, WA", price: 25, emoji: "⚽", g1: "#ef4444", g2: "#f97316", host: "Metro FC", attendees: 2100, capacity: 4500, featured: false, tags: ["Football", "Championship", "Live"] },
   { id: 7, title: "Founders Mixer: Climate Tech", category: "Business", dayOffset: 69, time: "6:00 PM", venue: "The Battery", city: "Boston, MA", price: 40, emoji: "🌱", g1: "#10b981", g2: "#14b8a6", host: "Climate Founders", attendees: 58, capacity: 100, featured: false, tags: ["Networking", "Climate", "Startups"] },
   { id: 8, title: "Alpine Lights: Winter Trek", category: "Travel", dayOffset: 90, time: "8:00 AM", venue: "Summit Base Camp", city: "Aspen, CO", price: 120, emoji: "🏔️", g1: "#0ea5e9", g2: "#6366f1", host: "Summit Collective", attendees: 32, capacity: 60, featured: false, tags: ["Hiking", "Winter", "Adventure"] },
+  { id: 9, title: "Hamlet — Shakespeare in the Park", category: "Drama", dayOffset: 24, time: "7:00 PM", venue: "Central Park Amphitheatre", city: "New York, NY", price: 35, emoji: "🎭", g1: "#8b5cf6", g2: "#ec4899", host: "Park Players", attendees: 210, capacity: 400, featured: false, tags: ["Theatre", "Drama", "Classic"] },
+  { id: 10, title: "Hack the Planet: AI for Good Hackathon", category: "Tech", dayOffset: 52, time: "9:00 AM", venue: "Innovation Hub", city: "San Francisco, CA", price: 50, emoji: "🤝", g1: "#06b6d4", g2: "#10b981", host: "Hackathon Alliance", attendees: 480, capacity: 1000, featured: true, tags: ["Hackathon", "AI", "Open Source"] },
+  { id: 11, title: "Stand-Up Comedy: Laugh Riot", category: "Comedy", dayOffset: 17, time: "8:00 PM", venue: "The Basement", city: "Los Angeles, CA", price: 25, emoji: "🎤", g1: "#f97316", g2: "#ef4444", host: "Laugh Riot", attendees: 150, capacity: 300, featured: false, tags: ["Comedy", "Live", "Stand-Up"] },
+  { id: 12, title: "Indie Waves: Folk & Acoustic Concert", category: "Music", dayOffset: 38, time: "7:30 PM", venue: "The Bluebird Hall", city: "Nashville, TN", price: 40, emoji: "🎸", g1: "#10b981", g2: "#84cc16", host: "Indie Waves", attendees: 260, capacity: 350, featured: false, tags: ["Folk", "Acoustic", "Concert"] },
 ];
 
 const events = EVENTS_RAW.map((e) => ({ ...e, isoDate: isoFromNow(e.dayOffset) }));
@@ -167,7 +171,7 @@ function renderCategories() {
 }
 
 function categoryEmoji(cat) {
-  const map = { Music: "🎵", Tech: "🤖", "Food & Drink": "🍜", Arts: "🎨", Wellness: "🧘", Sports: "⚽", Business: "🌱", Travel: "🏔️" };
+  const map = { Music: "🎵", Tech: "🤖", "Food & Drink": "🍜", Arts: "🎨", Wellness: "🧘", Sports: "⚽", Business: "🌱", Travel: "🏔️", Drama: "🎭", Comedy: "🎤" };
   return map[cat] || "🗓️";
 }
 
